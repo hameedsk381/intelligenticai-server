@@ -9,4 +9,7 @@ router.post('/changestatus', onboarduserController.changeOnBoardUserStatus)
 // GET
 router.get('/', onboarduserController.getOnBoardUsers)
 
+// DELETE
+router.delete('/:userId', onboarduserController.deleteOnBoardUser)
+
 export default router

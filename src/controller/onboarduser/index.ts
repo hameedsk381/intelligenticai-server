@@ -44,8 +44,22 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
     }
 }
 
+const deleteOnBoardUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const userId = req.params.userId
+        if (!userId) {
+            throw new InternalError(StatusCodes.PRECONDITION_FAILED, `Error: onboardUserRouter.deleteOnBoardUser - userId not provided!`)
+        }
+        const apiResponse = await onboarduserService.deleteOnBoardUser(userId)
+        res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     getOnBoardUsers,
     saveOnBoardUser,
-    changeOnBoardUserStatus
+    changeOnBoardUserStatus,
+    deleteOnBoardUser
 }

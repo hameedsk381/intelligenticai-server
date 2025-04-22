@@ -48,8 +48,25 @@ const changeOnBoardUserStatus = async (requestBody: any): Promise<any> => {
     }
 }
 
+const deleteOnBoardUser = async (userId: string): Promise<any> => {
+    try {
+        const onBoardUser = await onBoardUserRepository.findOneBy({ id: userId })
+        if (!onBoardUser) {
+            throw new InternalError(StatusCodes.NOT_FOUND, `User ${userId} not found`)
+        }
+        await onBoardUserRepository.remove(onBoardUser)
+        return { message: `User ${userId} deleted successfully` }
+    } catch (error) {
+        throw new InternalError(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+            `Error: onBoardUserService.deleteOnBoardUser - ${getErrorMessage(error)}`
+        )
+    }
+}
+
 export default {
     getOnBoardUsers,
     saveOnBoardUser,
-    changeOnBoardUserStatus
+    changeOnBoardUserStatus,
+    deleteOnBoardUser
 }
