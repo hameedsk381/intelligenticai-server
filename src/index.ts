@@ -6,12 +6,8 @@ import routes from './routes'
 import errorHandlerMiddleware from './middlewares/errors'
 
 const app = express()
-const corsOptions = {
-    origin: '*', // Allow requests from this origin
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Allow cookies
-  };
-  app.use(cors(corsOptions));
+
+  app.use(cors());
 app.use(express.json())
 
 app.use('/api/v1', routes)
