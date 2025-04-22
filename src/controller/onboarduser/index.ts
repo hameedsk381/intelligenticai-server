@@ -68,8 +68,10 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
             newUser.requirements = user.requirements
             newUser.dataprivacy = user.dataprivacy
             newUser.marketingconsent = user.marketingconsent
-            newUser.username = user.username
-            newUser.password = user.password
+            newUser.username = user.email // Use email as username
+            // Generate random password
+            const randomPassword = Math.random().toString(36).slice(-8)
+            newUser.password = randomPassword
             newUser.apikey = user.apikey
             newUser.flowids = user.flowids
             newUser.agentids = user.agentids
