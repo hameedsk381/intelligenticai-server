@@ -78,7 +78,7 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
             newUser.flowids = user.flowids
             newUser.agentids = user.agentids
             const createdUser = await userService.createUser(newUser)
-            res.json(createdUser)
+            res.json({...createdUser,randomPassword})
         }
     } catch (error) {
         next(error)
