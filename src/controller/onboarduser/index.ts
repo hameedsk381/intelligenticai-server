@@ -4,9 +4,23 @@ import { OnBoardUser } from '../../database/entities/OnBoardUser'
 import { InternalError } from '../../error/InternalError'
 import onboarduserService from '../../service/onboarduser'
 import userService from '../../service/user'
+
 const getOnBoardUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const apiResponse = await onboarduserService.getOnBoardUsers()
+        res.json(apiResponse)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getOnBoardUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const userId = req.params.userId
+        if (!userId) {
+            throw new InternalError(StatusCodes.PRECONDITION_FAILED, `Error: onboardUserRouter.getOnBoardUserById - userId not provided!`)
+        }
+        const apiResponse = await onboarduserService.getOnBoardUserById(userId)
         res.json(apiResponse)
     } catch (error) {
         next(error)
@@ -27,6 +41,7 @@ const saveOnBoardUser = async (req: Request, res: Response, next: NextFunction):
         next(error)
     }
 }
+
 const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         if (!req.body) {
@@ -39,7 +54,7 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
         })
         // If status is approved, create a new user
         if (body.status === 'approved') {
-            const user = await userService.getUserById(body.userId)
+            const user = await onboarduserService.getOnBoardUserById(body.userId)
             const newUser = {
                 usecase: user.usecase || null,
                 companysize: user.companysize || null,
@@ -81,6 +96,7 @@ const deleteOnBoardUser = async (req: Request, res: Response, next: NextFunction
 
 export default {
     getOnBoardUsers,
+    getOnBoardUserById,
     saveOnBoardUser,
     changeOnBoardUserStatus,
     deleteOnBoardUser

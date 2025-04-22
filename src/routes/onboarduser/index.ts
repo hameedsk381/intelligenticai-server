@@ -8,6 +8,7 @@ router.post('/changestatus', onboarduserController.changeOnBoardUserStatus)
 
 // GET
 router.get('/', onboarduserController.getOnBoardUsers)
+router.get('/:userId', onboarduserController.getOnBoardUserById)
 
 // DELETE
 router.delete('/:userId', onboarduserController.deleteOnBoardUser)

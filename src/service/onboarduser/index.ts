@@ -5,12 +5,31 @@ import { OnBoardUser } from '../../database/entities/OnBoardUser'
 import { AppDataSource } from '../../data-source'
 const onBoardUserRepository = AppDataSource.getRepository(OnBoardUser)
 
-const getOnBoardUsers = async (): Promise<any> => {
+const getOnBoardUsers = async (userId?: string): Promise<any> => {
     try {
+        if (userId) {
+            const dbResponse = await onBoardUserRepository.findOneBy({ id: userId })
+            if (!dbResponse) {
+                throw new InternalError(StatusCodes.NOT_FOUND, `User ${userId} not found`)
+            }
+            return dbResponse
+        }
         const dbResponse = await onBoardUserRepository.find()
         return dbResponse
     } catch (error) {
         throw new InternalError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: onboardUserService.getOnBoardUsers - ${getErrorMessage(error)}`)
+    }
+}
+
+const getOnBoardUserById = async (userId: string): Promise<any> => {
+    try {
+        const dbResponse = await onBoardUserRepository.findOneBy({ id: userId })
+        if (!dbResponse) {
+            throw new InternalError(StatusCodes.NOT_FOUND, `User ${userId} not found`)
+        }
+        return dbResponse
+    } catch (error) {
+        throw new InternalError(StatusCodes.INTERNAL_SERVER_ERROR, `Error: onboardUserService.getOnBoardUserById - ${getErrorMessage(error)}`)
     }
 }
 
@@ -66,6 +85,7 @@ const deleteOnBoardUser = async (userId: string): Promise<any> => {
 
 export default {
     getOnBoardUsers,
+    getOnBoardUserById,
     saveOnBoardUser,
     changeOnBoardUserStatus,
     deleteOnBoardUser
