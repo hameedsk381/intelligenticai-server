@@ -31,8 +31,20 @@ const getUserById = async (
         `Error: userController.getUserById - id not provided!`
       );
     }
-    const apiResponse = await userService.getUserById(req.params.id);
-    res.json(apiResponse);
+    const user = await userService.getUserById(req.params.id);
+    
+    // Verify password if provided in request
+    if (req.body?.password) {
+      const isPasswordValid = await argon2.verify(user.password, req.body.password);
+      if (!isPasswordValid) {
+        throw new InternalError(
+          StatusCodes.UNAUTHORIZED,
+          `Error: userController.getUserById - Invalid password`
+        );
+      }
+    }
+
+    res.json(user);
   } catch (error) {
     next(error);
   }
@@ -57,11 +69,13 @@ const createUser = async (
         `Error: userController.createUser - email already exists!`
       );
     }
-    const password = await argon2.hash(req.body.password);
+    const originalPassword = req.body.password;
+    const password = await argon2.hash(originalPassword);
     req.body.password = password;
     req.body.apikey = generateAPIKey();
     const apiResponse = await userService.createUser(req.body);
-    res.json(apiResponse);
+    // Include original password in response
+    res.json({ ...apiResponse, originalPassword });
   } catch (error) {
     next(error);
   }
