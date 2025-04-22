@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes'
 import { OnBoardUser } from '../../database/entities/OnBoardUser'
 import { InternalError } from '../../error/InternalError'
 import onboarduserService from '../../service/onboarduser'
-
+import userService from '../../service/user'
 const getOnBoardUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const apiResponse = await onboarduserService.getOnBoardUsers()
@@ -27,7 +27,6 @@ const saveOnBoardUser = async (req: Request, res: Response, next: NextFunction):
         next(error)
     }
 }
-
 const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         if (!req.body) {
@@ -38,6 +37,31 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
             userId: body.userId,
             status: body.status
         })
+
+        // If status is approved, create a new user
+        if (body.status === 'approved') {
+            const user = await userService.getUserById(body.userId)
+            const newUser = {
+                usecase: user.usecase || null,
+                companysize: user.companysize || null,
+                industry: user.industry || null,
+                companyname: user.companyname || null,
+                name: user.name || null,
+                email: user.email || null,
+                designation: user.designation || null,
+                phone: user.phone || null,
+                requirements: user.requirements || null,
+                dataprivacy: user.dataprivacy || null,
+                marketingconsent: user.marketingconsent || null,
+                username: user.username || null,
+                password: user.password || null,
+                apikey: user.apikey || null,
+                flowids: user.flowids || null,
+                agentids: user.agentids || null
+            }
+            await userService.createUser(newUser)
+        }
+
         res.json(apiResponse)
     } catch (error) {
         next(error)
