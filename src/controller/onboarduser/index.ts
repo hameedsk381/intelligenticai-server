@@ -37,7 +37,6 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
             userId: body.userId,
             status: body.status
         })
-
         // If status is approved, create a new user
         if (body.status === 'approved') {
             const user = await userService.getUserById(body.userId)
@@ -58,11 +57,10 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
                 apikey: user.apikey || null,
                 flowids: user.flowids || null,
                 agentids: user.agentids || null
-            }
-            await userService.createUser(newUser)
+            };
+            const createdUser = await userService.createUser(newUser);
+            res.json(createdUser);
         }
-
-        res.json(apiResponse)
     } catch (error) {
         next(error)
     }
