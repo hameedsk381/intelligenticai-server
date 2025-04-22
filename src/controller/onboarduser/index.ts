@@ -5,7 +5,7 @@ import { InternalError } from '../../error/InternalError'
 import onboarduserService from '../../service/onboarduser'
 import userService from '../../service/user'
 import { User } from '../../database/entities/User'
-
+import * as argon2 from "argon2";
 const getOnBoardUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const apiResponse = await onboarduserService.getOnBoardUsers()
@@ -71,7 +71,9 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
             newUser.username = user.email // Use email as username
             // Generate random password
             const randomPassword = Math.random().toString(36).slice(-8)
-            newUser.password = randomPassword
+            // Hash the password
+            const hashedPassword = await argon2.hash(randomPassword)
+            newUser.password = hashedPassword
             newUser.apikey = user.apikey
             newUser.flowids = user.flowids
             newUser.agentids = user.agentids
