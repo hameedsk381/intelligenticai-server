@@ -4,6 +4,7 @@ import { OnBoardUser } from '../../database/entities/OnBoardUser'
 import { InternalError } from '../../error/InternalError'
 import onboarduserService from '../../service/onboarduser'
 import userService from '../../service/user'
+import { User } from '../../database/entities/User'
 
 const getOnBoardUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -55,26 +56,25 @@ const changeOnBoardUserStatus = async (req: Request, res: Response, next: NextFu
         // If status is approved, create a new user
         if (body.status === 'approved') {
             const user = await onboarduserService.getOnBoardUserById(body.userId)
-            const newUser = {
-                usecase: user.usecase || null,
-                companysize: user.companysize || null,
-                industry: user.industry || null,
-                companyname: user.companyname || null,
-                name: user.name || null,
-                email: user.email || null,
-                designation: user.designation || null,
-                phone: user.phone || null,
-                requirements: user.requirements || null,
-                dataprivacy: user.dataprivacy || null,
-                marketingconsent: user.marketingconsent || null,
-                username: user.username || null,
-                password: user.password || null,
-                apikey: user.apikey || null,
-                flowids: user.flowids || null,
-                agentids: user.agentids || null
-            };
-            const createdUser = await userService.createUser(newUser);
-            res.json(createdUser);
+            const newUser = new User()
+            newUser.usecase = user.usecase
+            newUser.companysize = user.companysize
+            newUser.industry = user.industry
+            newUser.companyname = user.companyname
+            newUser.name = user.name
+            newUser.email = user.email
+            newUser.designation = user.designation
+            newUser.phone = user.phone
+            newUser.requirements = user.requirements
+            newUser.dataprivacy = user.dataprivacy
+            newUser.marketingconsent = user.marketingconsent
+            newUser.username = user.username
+            newUser.password = user.password
+            newUser.apikey = user.apikey
+            newUser.flowids = user.flowids
+            newUser.agentids = user.agentids
+            const createdUser = await userService.createUser(newUser)
+            res.json(createdUser)
         }
     } catch (error) {
         next(error)
