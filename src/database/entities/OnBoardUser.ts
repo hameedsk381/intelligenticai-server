@@ -37,6 +37,9 @@ export class OnBoardUser implements IOnBoardUser {
     @Column({ nullable: true })
     dataprivacy?: boolean
 
+    @Column()
+    requestType?: string
+
     @Column({ nullable: true })
     marketingconsent?: boolean
 
@@ -50,4 +53,7 @@ export class OnBoardUser implements IOnBoardUser {
     @Column({ type: 'timestamp' })
     @UpdateDateColumn()
     updatedDate!: Date
+
+    @Column('text', { array: true, nullable: true })
+    agentids!: string[]
 }
